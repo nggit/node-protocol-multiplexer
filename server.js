@@ -13,16 +13,16 @@ Whether it's HTTP, SSH, or etc.
 */
 
 // where this program will listen on
-const listenHost = process.env.APP_HOST ? process.env.APP_HOST : '0.0.0.0'; // no need to change this
-const listenPort = process.env.APP_PORT ? process.env.APP_PORT : 2222;
+const listenHost = process.env.APP_HOST || '0.0.0.0'; // no need to change this
+const listenPort = process.env.APP_PORT || 2222;
 
 // target host
-const host = process.env.APP_TARGET_HOST ? process.env.APP_TARGET_HOST : 'localhost';
+const host = process.env.APP_TARGET_HOST || 'localhost';
 
 // target ports
-const httpPort = process.env.APP_HTTP_PORT ? process.env.APP_HTTP_PORT : 80;
-const httpsPort = process.env.APP_HTTPS_PORT ? process.env.APP_HTTPS_PORT : 443;
-const sshPort = process.env.APP_SSH_PORT ? process.env.APP_SSH_PORT : 22;
+const httpPort = process.env.APP_HTTP_PORT || 80;
+const httpsPort = process.env.APP_HTTPS_PORT || 443;
+const sshPort = process.env.APP_SSH_PORT || 22;
 
 const server = net.createServer({ noDelay: true }, socket => {
   console.log('Client connected');
