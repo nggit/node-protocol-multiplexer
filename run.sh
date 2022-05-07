@@ -7,7 +7,9 @@ NORMAL="\033[0m"
 RED="\033[91m"
 YELLOW="\033[93m"
 
-if ! command -v node > /dev/null; then
+node=$( command -v node || command -v nodejs )
+
+if [ ! -x "$node" ]; then
     printf "%b\n" "${RED}Node.js is not installed. Please refer to the following link for installation: https://nodejs.org/en/download/package-manager/$NORMAL" 1>&2
     exit 1
 fi
@@ -28,7 +30,7 @@ while :; do
         printf "%b\n" "$YELLOW.env file not found. The default configuration will be used$NORMAL"
     fi
 
-    node server.js
+    $node server.js
 
     echo "Restarting..."
     sleep 1
