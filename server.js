@@ -40,21 +40,23 @@ const server = net.createServer({ noDelay: true }, socket => {
       switch (true) {
         case data.toString().substring(0, data.toString().indexOf('\n')).indexOf(' HTTP/') > 0:
           port = httpPort;
-            break;
+          break;
         case data.toString().indexOf('SSH-') === 0:
           port = sshPort;
-            break;
+          break;
       }
 
       client = net.createConnection({ port: port, host: host, noDelay: true }, () => {
-        console.log('*** Connected to ' + host + ' port ' + port);
+        console.log('*** Connected to', host, 'port', port);
       });
 
       // receive data from target then send it to client
-      client.pipe(socket);
+      client.pipe(socket).on('finish', () => {
+        client.end();
+      });
 
       client.on('end', () => {
-        console.log('*** Disconnected from ' + host + ' port ' + port);
+        console.log('*** Disconnected from', host, 'port', port);
       });
     }
 
@@ -72,5 +74,5 @@ server.on('error', err => {
 });
 
 server.listen(listenPort, listenHost, () => {
-  console.log('Node Protocol Multiplexer is started at ' + listenHost + ' port ' + listenPort);
+  console.log('Node Protocol Multiplexer is started at', listenHost, 'port', listenPort);
 });
