@@ -1,0 +1,20 @@
+{
+  "name": "protocol-multiplexer",
+  "version": "1.0.0",
+  "description": "A simple tool to serve multiple services on the same port. Written in Node.js with zero dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "test": "node=\"$( command -v node || command -v nodejs )\"; $node -c server.js",
+    "start": "sh run.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nggit/node-protocol-multiplexer.git"
+  },
+  "author": "nggit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nggit/node-protocol-multiplexer/issues"
+  },
+  "homepage": "https://github.com/nggit/node-protocol-multiplexer#readme"
+}
