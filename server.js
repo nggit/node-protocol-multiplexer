@@ -1,4 +1,8 @@
+'use strict';
+
+const cluster = require('cluster');
 const net = require('net');
+const os = require('os');
 
 /*
 This program can be used to share a public port for multiple services (on private/different ports).
@@ -24,8 +28,10 @@ const httpPort = process.env.APP_HTTP_PORT || 80;
 const httpsPort = process.env.APP_HTTPS_PORT || 443;
 const sshPort = process.env.APP_SSH_PORT || 22;
 
+const workerCount = Math.min(process.env.APP_WORKER_COUNT || 2, os.cpus().length);
+
 const server = net.createServer({ noDelay: true }, socket => {
-  console.log('Client connected');
+  console.log('Client connected to worker', process.pid);
 
   var client;
 
@@ -65,14 +71,31 @@ const server = net.createServer({ noDelay: true }, socket => {
   });
 
   socket.on('end', () => {
-    console.log('Client disconnected');
+    console.log('Client disconnected from worker', process.pid);
   });
 });
 
-server.on('error', err => {
-  throw err;
-});
+if (workerCount > 1 && !cluster.isWorker) {
+  console.log('Node Protocol Multiplexer (pid %d) is running. Starting %d workers...', process.pid, workerCount);
 
-server.listen(listenPort, listenHost, () => {
-  console.log('Node Protocol Multiplexer is started at', listenHost, 'port', listenPort);
-});
+  for (let i = 0; i < workerCount; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log('Worker %d died (%s)', worker.process.pid, signal || code);
+
+    if (code !== 0) {
+      console.log('Starting a new worker...');
+      cluster.fork();
+    }
+  });
+} else {
+  server.on('error', err => {
+    throw err;
+  });
+
+  server.listen(listenPort, listenHost, () => {
+    console.log('Node Protocol Multiplexer (pid %d) is started at %s port %d', process.pid, listenHost, listenPort);
+  });
+}
