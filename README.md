@@ -21,6 +21,18 @@ Just edit the [.env](.env) file.
 
 Usage
 -----
+There are several ways to run this program.
+Please use [run.sh](run.sh) as an entry point instead of running `node server.js` directly to have the [.env](.env) file loaded:
+```
+sh run.sh
+```
+
+If you have `npm`:
+```
+npm start
+```
+
+Alternatively, it's quite common to run it by calling `run.sh` file directly.
 Make sure to make the `run.sh` file executable:
 ```
 chmod +x run.sh
