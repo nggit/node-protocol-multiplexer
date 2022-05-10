@@ -28,7 +28,7 @@ const httpPort = process.env.APP_HTTP_PORT || 80;
 const httpsPort = process.env.APP_HTTPS_PORT || 443;
 const sshPort = process.env.APP_SSH_PORT || 22;
 
-const workerCount = Math.min(process.env.APP_WORKER_COUNT || 2, os.cpus().length);
+const workerNum = Math.min(process.env.APP_WORKER_NUM || 2, os.cpus().length);
 
 const server = net.createServer({ noDelay: true }, socket => {
   console.log('Client connected to worker', process.pid);
@@ -75,10 +75,10 @@ const server = net.createServer({ noDelay: true }, socket => {
   });
 });
 
-if (workerCount > 1 && !cluster.isWorker) {
-  console.log('Node Protocol Multiplexer (pid %d) is running. Starting %d workers...', process.pid, workerCount);
+if (workerNum > 1 && !cluster.isWorker) {
+  console.log('Node Protocol Multiplexer (pid %d) is running. Starting %d workers...', process.pid, workerNum);
 
-  for (let i = 0; i < workerCount; i++) {
+  for (let i = 0; i < workerNum; i++) {
     cluster.fork();
   }
 
