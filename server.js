@@ -44,10 +44,10 @@ const server = net.createServer({ noDelay: true }, socket => {
       var port = httpsPort; // default target port
 
       switch (true) {
-        case data.toString().substring(0, data.toString().indexOf('\n')).indexOf(' HTTP/') > 0:
+        case data.toString().substring(0, data.indexOf('\r\n')).indexOf(' HTTP/') > 0:
           port = httpPort;
           break;
-        case data.toString().indexOf('SSH-') === 0:
+        case data.indexOf('SSH-') === 0:
           port = sshPort;
           break;
       }
