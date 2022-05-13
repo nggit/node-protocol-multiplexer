@@ -34,7 +34,7 @@ const workerNum = Math.min(process.env.APP_WORKER_NUM || 2, os.cpus().length);
 const server = net.createServer({ noDelay: true }, socket => {
   console.log('Client connected to worker', process.pid);
 
-  var client;
+  let client;
 
   socket.on('data', data => {
     if (client === undefined) {
@@ -42,7 +42,7 @@ const server = net.createServer({ noDelay: true }, socket => {
       // here we can detect the protocol and determine the appropriate port
       console.log(data.toString());
 
-      var port = httpsPort; // default target port
+      let port = httpsPort; // default target port
 
       switch (true) {
         case data.toString().substring(0, data.indexOf('\r\n')).indexOf(' HTTP/') > 0:
