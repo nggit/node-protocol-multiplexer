@@ -3,6 +3,7 @@
 const cluster = require('cluster');
 const net = require('net');
 const os = require('os');
+const errors = require('./errors');
 
 /*
 This program can be used to share a public port for multiple services (on private/different ports).
@@ -61,6 +62,11 @@ const server = net.createServer({ noDelay: true }, socket => {
         client.end();
       });
 
+      client.on('error', err => {
+        socket.end();
+        console.error(errors.getMessage(err.code));
+      });
+
       client.on('end', () => {
         console.log('*** Disconnected from', host, 'port', port);
       });
@@ -68,6 +74,10 @@ const server = net.createServer({ noDelay: true }, socket => {
 
     // receive data from client then send it to target
     client.write(data);
+  });
+
+  socket.on('error', err => {
+    console.error(errors.getMessage(err.code));
   });
 
   socket.on('end', () => {
@@ -83,7 +93,7 @@ if (workerNum > 1 && !cluster.isWorker) {
   }
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log('Worker %d died (%s)', worker.process.pid, signal || code);
+    console.error('Worker %d died (%s)', worker.process.pid, signal || code);
 
     if (code !== 0) {
       console.log('Starting a new worker...');
@@ -92,7 +102,12 @@ if (workerNum > 1 && !cluster.isWorker) {
   });
 } else {
   server.on('error', err => {
-    throw err;
+    console.error(errors.getMessage(err.code));
+
+    setTimeout(() => {
+      server.close();
+      server.listen(listenPort, listenHost);
+    }, 1000);
   });
 
   server.listen(listenPort, listenHost, () => {
